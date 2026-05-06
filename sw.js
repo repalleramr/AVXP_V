@@ -1,4 +1,4 @@
-const CACHE_NAME = 'avxp-cache-v1';
+const CACHE_NAME = 'avxp-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -20,7 +20,6 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Return cached version or fetch from network
         return response || fetch(event.request);
       })
   );
