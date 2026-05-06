@@ -21,14 +21,32 @@
                 <span class="stat-value" id="stat-avg">--</span>
             </div>
             <div class="stat-box">
-                <span class="stat-label">2.0x+ Frequency</span>
-                <span class="stat-value" id="stat-freq">--</span>
+                <span class="stat-label">Next >2.0x Prob</span>
+                <span class="stat-value" id="stat-prob">--</span>
+            </div>
+        </div>
+
+        <div class="ai-panel">
+            <div class="ai-header">🤖 AI Predictive Engine</div>
+            <div class="ai-metrics">
+                <div class="ai-metric-box">
+                    <span class="stat-label">Suggested Target</span>
+                    <span class="stat-value" id="ai-target">Waiting...</span>
+                </div>
+                <div class="ai-metric-box">
+                    <span class="stat-label">Trend Analysis</span>
+                    <span class="ai-confidence" id="ai-confidence">Need 3+ Rounds</span>
+                </div>
             </div>
         </div>
 
         <div class="input-section">
-            <input type="number" id="multiplier-input" step="0.01" min="1.00" placeholder="1.00" inputmode="decimal">
-            <button id="add-btn">LOG</button>
+            <input type="number" id="multiplier-input" step="0.01" min="1.00" placeholder="e.g. 1.50" inputmode="decimal">
+        </div>
+
+        <div class="controls action-controls">
+            <button id="undo-btn" class="secondary-btn" disabled>Undo</button>
+            <button id="redo-btn" class="secondary-btn" disabled>Redo</button>
         </div>
 
         <div class="controls">
@@ -39,6 +57,17 @@
         <div class="history-section">
             <h3>Session History (<span id="total-rounds">0</span>)</h3>
             <div id="history-grid" class="history-grid"></div>
+        </div>
+
+        <div class="hash-checker-section">
+            <h3>Provably Fair Verifier</h3>
+            <input type="text" id="server-seed" placeholder="Paste Server Seed or Hash here">
+            <input type="text" id="client-seed" placeholder="Paste Client Seed (Optional)">
+            <button id="verify-hash-btn">Verify Result</button>
+            <div class="hash-result-box">
+                <span>Calculated Result: </span>
+                <span id="hash-result-value">--</span>
+            </div>
         </div>
     </div>
 
