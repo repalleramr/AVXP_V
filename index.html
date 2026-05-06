@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>avxp Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#121212">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>avxp</h1>
+            <span id="connection-status">Online</span>
+        </header>
+
+        <div class="stats-panel">
+            <div class="stat-box">
+                <span class="stat-label">10-Round Avg</span>
+                <span class="stat-value" id="stat-avg">--</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">2.0x+ Frequency</span>
+                <span class="stat-value" id="stat-freq">--</span>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <input type="number" id="multiplier-input" step="0.01" min="1.00" placeholder="1.00" inputmode="decimal">
+            <button id="add-btn">LOG</button>
+        </div>
+
+        <div class="controls">
+            <button id="export-btn" class="secondary-btn">Export Data</button>
+            <button id="reset-btn" class="danger-btn">Clear Session</button>
+        </div>
+
+        <div class="history-section">
+            <h3>Session History (<span id="total-rounds">0</span>)</h3>
+            <div id="history-grid" class="history-grid"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
