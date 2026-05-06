@@ -4,12 +4,13 @@
     --text-primary: #ffffff;
     --text-secondary: #8b8e93;
     
-    /* Exact Multiplier Colors from Screenshot */
+    /* Exact Multiplier Colors */
     --low-mult: #34b4ff;      /* Blue for < 2.00x */
     --high-mult: #c552ff;     /* Purple for >= 2.00x */
+    --huge-mult: #ff2a2a;     /* Red for >= 10.00x */
     
     /* UI Accent Colors */
-    --action-green: #2b9f2b;  /* Green from the Bet button */
+    --action-green: #2b9f2b;  
     --danger: #e74c3c;
     --accent: #f1c40f;
 }
@@ -48,14 +49,18 @@ header h1 { font-size: 1.5rem; font-style: italic; color: var(--danger); font-we
     border: 1px solid #333;
 }
 
-.ai-header { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: bold; }
+.ai-header { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: bold; text-align: center;}
 .ai-metrics { display: flex; justify-content: space-between; }
 .stat-box, .ai-metric-box { flex: 1; text-align: center; }
 .stat-label { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 5px; }
 .stat-value { font-size: 1.3rem; font-weight: bold; }
 .ai-confidence { display: block; font-size: 0.8rem; margin-top: 4px; font-weight: bold; color: var(--accent); }
 
-/* History Section - Redesigned to match screenshot */
+.stat-value.high { color: var(--success); }
+.stat-value.low { color: var(--danger); }
+.stat-value.neutral { color: var(--accent); }
+
+/* History Section */
 .history-section {
     background-color: var(--panel-bg);
     border-radius: 12px;
@@ -73,7 +78,7 @@ header h1 { font-size: 1.5rem; font-style: italic; color: var(--danger); font-we
 .history-grid {
     display: flex; 
     flex-wrap: wrap; 
-    gap: 8px 14px; /* Vertical and Horizontal spacing */
+    gap: 8px 14px; 
     line-height: 1.5;
 }
 
@@ -81,16 +86,17 @@ header h1 { font-size: 1.5rem; font-style: italic; color: var(--danger); font-we
     font-weight: 700;
     font-size: 1.05rem;
     letter-spacing: 0.5px;
-    background: none; /* Removed the box background */
+    background: none; 
     padding: 0;
 }
 
-/* Specific Screenshot Colors */
+/* History Color Logic */
 .history-item.low { color: var(--low-mult); }
 .history-item.high { color: var(--high-mult); }
+.history-item.huge { color: var(--huge-mult); }
 
 /* Inputs and Controls */
-.input-section { margin-bottom: 15px; }
+.input-section { margin-bottom: 15px; display: flex; gap: 10px; }
 input[type="number"] {
     width: 100%; 
     background-color: #000; 
@@ -111,6 +117,7 @@ button {
 }
 
 .controls { display: flex; gap: 10px; margin-bottom: 15px; }
+.action-controls { margin-bottom: 15px; }
 .controls button { flex: 1; background-color: #2a2b2c; color: #fff; }
 .controls button:disabled { opacity: 0.4; cursor: not-allowed; }
 .controls .danger-btn { background-color: transparent; border: 1px solid var(--danger); color: var(--danger); }
@@ -125,6 +132,7 @@ button {
     width: 100%; background-color: #000; color: #fff; border: 1px solid #333;
     border-radius: 8px; padding: 12px; margin-bottom: 10px; outline: none;
 }
+.hash-checker-section input[type="text"]:focus { border-color: var(--action-green); }
 #verify-hash-btn { width: 100%; background-color: var(--action-green); color: #fff; margin-bottom: 15px; border-radius: 8px;}
 .hash-result-box { text-align: center; font-size: 1.1rem; }
 #hash-result-value { font-weight: bold; color: var(--action-green); margin-left: 5px; }
