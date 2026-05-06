@@ -6,7 +6,7 @@
     <title>avxp Tracker</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#0b0b0b">
 </head>
 <body>
     <div class="container">
@@ -14,17 +14,6 @@
             <h1>avxp</h1>
             <span id="connection-status">Online</span>
         </header>
-
-        <div class="stats-panel">
-            <div class="stat-box">
-                <span class="stat-label">10-Round Avg</span>
-                <span class="stat-value" id="stat-avg">--</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">Next >2.0x Prob</span>
-                <span class="stat-value" id="stat-prob">--</span>
-            </div>
-        </div>
 
         <div class="ai-panel">
             <div class="ai-header">🤖 AI Predictive Engine</div>
@@ -40,6 +29,11 @@
             </div>
         </div>
 
+        <div class="history-section">
+            <h3>Session History (<span id="total-rounds">0</span>)</h3>
+            <div id="history-grid" class="history-grid"></div>
+        </div>
+
         <div class="input-section">
             <input type="number" id="multiplier-input" step="0.01" min="1.00" placeholder="e.g. 1.50" inputmode="decimal">
         </div>
@@ -49,14 +43,20 @@
             <button id="redo-btn" class="secondary-btn" disabled>Redo</button>
         </div>
 
+        <div class="stats-panel">
+            <div class="stat-box">
+                <span class="stat-label">10-Round Avg</span>
+                <span class="stat-value" id="stat-avg">--</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Next >2.0x Prob</span>
+                <span class="stat-value" id="stat-prob">--</span>
+            </div>
+        </div>
+
         <div class="controls">
             <button id="export-btn" class="secondary-btn">Export Data</button>
             <button id="reset-btn" class="danger-btn">Clear Session</button>
-        </div>
-
-        <div class="history-section">
-            <h3>Session History (<span id="total-rounds">0</span>)</h3>
-            <div id="history-grid" class="history-grid"></div>
         </div>
 
         <div class="hash-checker-section">
