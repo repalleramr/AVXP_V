@@ -32,6 +32,15 @@ function init() {
     renderUI();
     registerServiceWorker();
 }
+// Inside the renderUI() function in app.js
+    const reversedHistory = [...sessionHistory].reverse();
+    reversedHistory.forEach(mult => {
+        const div = document.createElement('div');
+        // This ensures >= 2.00x gets the purple class, and under gets the blue class
+        div.className = `history-item ${mult >= 2.00 ? 'high' : 'low'}`;
+        div.textContent = mult.toFixed(2) + 'x';
+        historyGrid.appendChild(div);
+    });
 
 // Auto-Submit Logic
 inputField.addEventListener('input', function(e) {
