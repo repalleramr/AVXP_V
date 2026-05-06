@@ -103,7 +103,7 @@ function exportData() {
     document.body.removeChild(link);
 }
 
-// --- AI Predictive Engine (Structural Pattern Recognizer) ---
+// --- AI Predictive Engine (Dynamic Volatility Tracker) ---
 function runAIEngine() {
     if (sessionHistory.length < 3) {
         aiTargetEl.textContent = "Waiting...";
@@ -112,68 +112,84 @@ function runAIEngine() {
         return;
     }
 
-    const recent = sessionHistory.slice(-5);
-    const last = recent[recent.length - 1];   
-    const prev1 = recent[recent.length - 2];  
-    const prev2 = recent[recent.length - 3];  
+    const recent = sessionHistory.slice(-10);
+    const last = recent[recent.length - 1];
     
-    const isHigh = (val) => val >= 2.00;
-    const isLow = (val) => val < 2.00;
+    // 1. Calculate Current Streak (Highs >= 2.00, Lows < 2.00)
+    let isCurrentlyHigh = last >= 2.00;
+    let streakCount = 1;
+    for (let i = recent.length - 2; i >= 0; i--) {
+        if ((recent[i] >= 2.00) === isCurrentlyHigh) {
+            streakCount++;
+        } else {
+            break;
+        }
+    }
+
+    // 2. Detect 10x+ drop in the last 2 rounds (Algorithm usually pulls back after this)
+    const recentHuge = sessionHistory.slice(-2).some(val => val >= 10.00);
+
+    // 3. Calculate 5-round Weighted Momentum
+    const last5 = sessionHistory.slice(-5);
+    let wmaSum = 0, weightSum = 0;
+    for (let i = 0; i < last5.length; i++) {
+        wmaSum += last5[i] * (i + 1);
+        weightSum += (i + 1);
+    }
+    const wma = wmaSum / weightSum;
 
     let aiTarget = 1.00;
     let trend = "";
     let colorClass = "";
 
-    // 1. Alternating "Ping-Pong" Patterns
-    if (isLow(last) && isHigh(prev1) && isLow(prev2)) {
-        aiTarget = 2.00; 
-        trend = "Ping-Pong Pattern Found";
-        colorClass = "high"; 
-    } else if (isHigh(last) && isLow(prev1) && isHigh(prev2)) {
-        aiTarget = 1.20; 
-        trend = "Ping-Pong Pattern Found";
-        colorClass = "low"; 
-    }
-    // 2. Streak Detection
-    else if (isLow(last) && isLow(prev1) && isLow(prev2)) {
-        aiTarget = 2.00;
-        trend = "Cold Streak (Bounce Expected)";
-        colorClass = "high"; 
-    } else if (isHigh(last) && isHigh(prev1) && isHigh(prev2)) {
-        aiTarget = 1.50;
-        trend = "Riding Hot Streak";
-        colorClass = "neutral"; 
-    }
-    // 3. Reversal Traps
-    else if (isHigh(last) && isLow(prev1) && isLow(prev2)) {
-        aiTarget = 2.00;
-        trend = "Upward Reversal Started";
-        colorClass = "high"; 
-    } else if (isLow(last) && isHigh(prev1) && isHigh(prev2)) {
-        aiTarget = 1.20;
-        trend = "Downward Reversal Started";
-        colorClass = "low"; 
-    }
-    // 4. Default Fallback (Weighted Momentum)
-    else {
-        let wmaSum = 0, weightSum = 0;
-        for (let i = 0; i < recent.length; i++) {
-            wmaSum += recent[i] * (i + 1);
-            weightSum += (i + 1);
-        }
-        const wma = wmaSum / weightSum;
+    // --- DYNAMIC AI LOGIC TREE ---
 
-        if (wma >= 2.00) {
-            aiTarget = 1.30;
-            trend = "General Cooling Phase";
+    if (recentHuge) {
+        // Post-10x defensive play
+        aiTarget = 1.15 + (Math.random() * 0.05); 
+        trend = "Post-Huge Pullback (High Risk)";
+        colorClass = "low";
+    } 
+    else if (!isCurrentlyHigh && streakCount >= 3) {
+        // Deep Cold Streak: Scale the target up as the streak gets longer
+        aiTarget = 2.00 + (streakCount * 0.15) - (wma * 0.05);
+        trend = `Deep Cold (${streakCount}x) - Aggressive Bounce`;
+        colorClass = "high";
+    }
+    else if (isCurrentlyHigh && streakCount >= 2) {
+        // Hot Streak: Drop the target to avoid the sudden crash
+        aiTarget = 1.35 - (streakCount * 0.05);
+        trend = `Hot Streak (${streakCount}x) - Crash Imminent`;
+        colorClass = "low";
+    }
+    else if (recent.length >= 4 && 
+             (recent[recent.length-1] >= 2.0) !== (recent[recent.length-2] >= 2.0) &&
+             (recent[recent.length-2] >= 2.0) !== (recent[recent.length-3] >= 2.0)) {
+        // Ping-Pong Oscillation
+        aiTarget = isCurrentlyHigh ? 1.45 : 2.25; 
+        trend = "Ping-Pong Oscillation Tracked";
+        colorClass = isCurrentlyHigh ? "low" : "high";
+    }
+    else {
+        // The Core Engine: Dynamic Inverted Momentum
+        aiTarget = 3.20 - wma;
+        
+        if (aiTarget >= 2.00) {
+            trend = "Momentum Building (Favorable)";
+            colorClass = "high";
+        } else if (aiTarget <= 1.50) {
+            trend = "Market Cooling (Defensive)";
             colorClass = "low";
         } else {
-            aiTarget = 1.80;
-            trend = "Building Momentum";
+            trend = "Neutral Volatility";
             colorClass = "neutral";
         }
     }
 
+    // Clamp the final target to realistic boundaries (Min 1.10x, Max 3.50x)
+    aiTarget = Math.max(1.10, Math.min(aiTarget, 3.50));
+
+    // Update UI
     aiTargetEl.textContent = aiTarget.toFixed(2) + 'x';
     aiTargetEl.className = `stat-value ${colorClass}`;
     aiConfidenceEl.textContent = trend;
