@@ -2,6 +2,7 @@
 const AVXP_STORAGE_KEY = 'avxp_session_history';
 let sessionHistory = JSON.parse(localStorage.getItem(AVXP_STORAGE_KEY)) || [];
 
+// Undo/Redo State Limits
 let redoStack = []; 
 const MAX_UNDO = 10;
 let currentUndoDepth = 0; 
@@ -32,25 +33,16 @@ function init() {
     renderUI();
     registerServiceWorker();
 }
-// Inside the renderUI() function in app.js
-    const reversedHistory = [...sessionHistory].reverse();
-    reversedHistory.forEach(mult => {
-        const div = document.createElement('div');
-        // This ensures >= 2.00x gets the purple class, and under gets the blue class
-        div.className = `history-item ${mult >= 2.00 ? 'high' : 'low'}`;
-        div.textContent = mult.toFixed(2) + 'x';
-        historyGrid.appendChild(div);
-    });
 
 // Auto-Submit Logic
 inputField.addEventListener('input', function(e) {
     const val = e.target.value;
+    // Regex checks if string ends with decimal and exactly two digits
     if (/^\d+\.\d{2}$/.test(val)) {
         addResult(val);
     }
 });
 
-// Add Result Function
 function addResult(valueStr) {
     const val = parseFloat(valueStr);
     if (!isNaN(val) && val >= 1.00) {
@@ -111,7 +103,7 @@ function exportData() {
     document.body.removeChild(link);
 }
 
-// --- AI Predictive Engine ---
+// --- AI Predictive Engine (Structural Pattern Recognizer) ---
 function runAIEngine() {
     if (sessionHistory.length < 3) {
         aiTargetEl.textContent = "Waiting...";
@@ -120,44 +112,66 @@ function runAIEngine() {
         return;
     }
 
-    // Look at the last 10 rounds for pattern analysis
-    const recent = sessionHistory.slice(-10);
-    const n = recent.length;
+    const recent = sessionHistory.slice(-5);
+    const last = recent[recent.length - 1];   
+    const prev1 = recent[recent.length - 2];  
+    const prev2 = recent[recent.length - 3];  
     
-    // Calculate Mean & Variance (Volatility)
-    const mean = recent.reduce((a, b) => a + b, 0) / n;
-    const variance = recent.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
-    
-    // Calculate Weighted Moving Average (favors most recent rounds)
-    let wmaSum = 0;
-    let weightSum = 0;
-    for (let i = 0; i < n; i++) {
-        const weight = i + 1; // More weight to newer entries
-        wmaSum += recent[i] * weight;
-        weightSum += weight;
-    }
-    const wma = wmaSum / weightSum;
+    const isHigh = (val) => val >= 2.00;
+    const isLow = (val) => val < 2.00;
 
-    // AI Decision Logic
     let aiTarget = 1.00;
     let trend = "";
     let colorClass = "";
 
-    if (wma < 1.40 && variance < 1.5) {
-        // Prolonged cold streak - AI predicts impending algorithm correction
+    // 1. Alternating "Ping-Pong" Patterns
+    if (isLow(last) && isHigh(prev1) && isLow(prev2)) {
         aiTarget = 2.00; 
-        trend = "Bullish Reversal Expected";
-        colorClass = "high";
-    } else if (wma > 2.50) {
-        // High recent payouts - AI advises caution as RTP cools down
+        trend = "Ping-Pong Pattern Found";
+        colorClass = "high"; 
+    } else if (isHigh(last) && isLow(prev1) && isHigh(prev2)) {
         aiTarget = 1.20; 
-        trend = "Cooling Phase (High Risk)";
-        colorClass = "low";
-    } else {
-        // Normal volatility
-        aiTarget = 1.50; 
-        trend = "Neutral Volatility";
-        colorClass = "neutral";
+        trend = "Ping-Pong Pattern Found";
+        colorClass = "low"; 
+    }
+    // 2. Streak Detection
+    else if (isLow(last) && isLow(prev1) && isLow(prev2)) {
+        aiTarget = 2.00;
+        trend = "Cold Streak (Bounce Expected)";
+        colorClass = "high"; 
+    } else if (isHigh(last) && isHigh(prev1) && isHigh(prev2)) {
+        aiTarget = 1.50;
+        trend = "Riding Hot Streak";
+        colorClass = "neutral"; 
+    }
+    // 3. Reversal Traps
+    else if (isHigh(last) && isLow(prev1) && isLow(prev2)) {
+        aiTarget = 2.00;
+        trend = "Upward Reversal Started";
+        colorClass = "high"; 
+    } else if (isLow(last) && isHigh(prev1) && isHigh(prev2)) {
+        aiTarget = 1.20;
+        trend = "Downward Reversal Started";
+        colorClass = "low"; 
+    }
+    // 4. Default Fallback (Weighted Momentum)
+    else {
+        let wmaSum = 0, weightSum = 0;
+        for (let i = 0; i < recent.length; i++) {
+            wmaSum += recent[i] * (i + 1);
+            weightSum += (i + 1);
+        }
+        const wma = wmaSum / weightSum;
+
+        if (wma >= 2.00) {
+            aiTarget = 1.30;
+            trend = "General Cooling Phase";
+            colorClass = "low";
+        } else {
+            aiTarget = 1.80;
+            trend = "Building Momentum";
+            colorClass = "neutral";
+        }
     }
 
     aiTargetEl.textContent = aiTarget.toFixed(2) + 'x';
@@ -202,7 +216,16 @@ function renderUI() {
     const reversedHistory = [...sessionHistory].reverse();
     reversedHistory.forEach(mult => {
         const div = document.createElement('div');
-        div.className = `history-item ${mult >= 2.00 ? 'high' : 'low'}`;
+        
+        // Dynamic Color Logic
+        let colorClass = 'low'; 
+        if (mult >= 10.00) {
+            colorClass = 'huge'; // Red
+        } else if (mult >= 2.00) {
+            colorClass = 'high'; // Purple
+        }
+
+        div.className = `history-item ${colorClass}`;
         div.textContent = mult.toFixed(2) + 'x';
         historyGrid.appendChild(div);
     });
@@ -223,7 +246,6 @@ function renderUI() {
         statProbEl.textContent = '--';
     }
 
-    // Run the AI Prediction Engine
     runAIEngine();
 }
 
