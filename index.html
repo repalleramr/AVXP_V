@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>avxp Tracker</title>
+    <title>avxp Baccarat Engine</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
     <meta name="theme-color" content="#0b0b0b">
@@ -11,63 +11,47 @@
 <body>
     <div class="container">
         <header>
-            <h1>avxp</h1>
-            <span id="connection-status">Online</span>
+            <h1>avxp <span>Tactical</span></h1>
+            <span id="connection-status">Shoe Active</span>
         </header>
 
         <div class="ai-panel">
-            <div class="ai-header">🤖 AI Predictive Engine</div>
+            <div class="ai-header">Shoe Composition Data</div>
             <div class="ai-metrics">
                 <div class="ai-metric-box">
-                    <span class="stat-label">Suggested Target</span>
-                    <span class="stat-value" id="ai-target">Waiting...</span>
+                    <span class="stat-label">Cards Remaining</span>
+                    <span class="stat-value" id="cards-left">416</span>
                 </div>
                 <div class="ai-metric-box">
-                    <span class="stat-label">Trend Analysis</span>
-                    <span class="ai-confidence" id="ai-confidence">Need 3+ Rounds</span>
+                    <span class="stat-label">Net Profit (Cycle Rule)</span>
+                    <span class="stat-value neutral" id="net-profit">+0 U</span>
                 </div>
             </div>
         </div>
 
-        <div class="history-section">
-            <h3>Session History (<span id="total-rounds">0</span>)</h3>
-            <div id="history-grid" class="history-grid"></div>
-        </div>
-
-        <div class="input-section">
-            <input type="number" id="multiplier-input" step="0.01" min="1.00" placeholder="e.g. 1.50" inputmode="decimal">
+        <div class="keypad-section">
+            <div class="keypad-grid">
+                <button class="key-btn" data-val="1">1</button>
+                <button class="key-btn" data-val="2">2</button>
+                <button class="key-btn" data-val="3">3</button>
+                <button class="key-btn" data-val="4">4</button>
+                <button class="key-btn" data-val="5">5</button>
+                <button class="key-btn" data-val="6">6</button>
+                <button class="key-btn" data-val="7">7</button>
+                <button class="key-btn" data-val="8">8</button>
+                <button class="key-btn" data-val="9">9</button>
+                <button class="key-btn zero-btn" data-val="0">0 (10, J, Q, K)</button>
+            </div>
         </div>
 
         <div class="controls action-controls">
-            <button id="undo-btn" class="secondary-btn" disabled>Undo</button>
-            <button id="redo-btn" class="secondary-btn" disabled>Redo</button>
+            <button id="undo-btn" class="secondary-btn" disabled>Undo Card</button>
+            <button id="reset-shoe-btn" class="danger-btn">New Shoe</button>
         </div>
 
-        <div class="stats-panel">
-            <div class="stat-box">
-                <span class="stat-label">10-Round Avg</span>
-                <span class="stat-value" id="stat-avg">--</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">Next >2.0x Prob</span>
-                <span class="stat-value" id="stat-prob">--</span>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button id="export-btn" class="secondary-btn">Export Data</button>
-            <button id="reset-btn" class="danger-btn">Clear Session</button>
-        </div>
-
-        <div class="hash-checker-section">
-            <h3>Provably Fair Verifier</h3>
-            <input type="text" id="server-seed" placeholder="Paste Server Seed or Hash here">
-            <input type="text" id="client-seed" placeholder="Paste Client Seed (Optional)">
-            <button id="verify-hash-btn">Verify Result</button>
-            <div class="hash-result-box">
-                <span>Calculated Result: </span>
-                <span id="hash-result-value">--</span>
-            </div>
+        <div class="history-section">
+            <h3>Current Shoe History</h3>
+            <div id="history-grid" class="history-grid"></div>
         </div>
     </div>
 
