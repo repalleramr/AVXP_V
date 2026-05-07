@@ -1,5 +1,3 @@
-/* Replace your keypad and hand-box styles with these */
-
 :root {
     --bg-color: #0b0b0b;
     --panel-bg: #1a1b1c;
@@ -13,7 +11,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body { font-family: -apple-system, sans-serif; background-color: var(--bg-color); color: var(--text-primary); padding: 15px; user-select: none; }
-.container { max-width: 600px; margin: 0 auto; }
+.container { max-width: 600px; margin: 0 auto; position: relative; }
 
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 header h1 { font-size: 1.5rem; font-style: italic; color: var(--danger); font-weight: 900; letter-spacing: -1px;}
@@ -33,8 +31,8 @@ header h1 { font-size: 1.5rem; font-style: italic; color: var(--danger); font-we
 .hand-display { display: flex; gap: 10px; justify-content: space-between; }
 .hand-box { flex: 1; text-align: center; padding: 10px; border-radius: 8px; background-color: #111; }
 
-.player-hand span { color: #34b4ff; font-weight: bold; font-size: 0.9rem;}
-.banker-hand span { color: #e74c3c; font-weight: bold; font-size: 0.9rem;}
+.player-hand span, .player-hand.stat-value { color: #34b4ff; font-weight: bold; font-size: 0.9rem;}
+.banker-hand span, .banker-hand.stat-value { color: #e74c3c; font-weight: bold; font-size: 0.9rem;}
 
 /* Visual Card Badge UI */
 .cards-area { margin: 12px 0; min-height: 35px; display: flex; justify-content: center; gap: 5px; flex-wrap: wrap;}
@@ -64,10 +62,26 @@ header h1 { font-size: 1.5rem; font-style: italic; color: var(--danger); font-we
     border: 2px solid #333; border-radius: 12px; cursor: pointer; text-align: center;
 }
 .key-btn:active { border-color: var(--accent); }
-.face-btn { background-color: #1a1b1c; } /* Distinct color for face cards */
+.face-btn { background-color: #1a1b1c; }
 
 /* Controls */
 .controls { display: flex; gap: 10px; margin-bottom: 15px; }
 .controls button { flex: 1; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 20px; cursor: pointer; }
 .danger-btn { background-color: transparent; border: 1px solid var(--danger); color: var(--danger); }
 .secondary-btn { background-color: transparent; border: 1px solid #444; color: #fff; }
+
+/* Winner Notification Toast */
+.winner-toast {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 40px; border-radius: 12px;
+    font-size: 1.6rem; font-weight: 900; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1000;
+}
+.winner-toast.show { opacity: 1; }
+.winner-toast.p-win { background-color: #34b4ff; color: #000; }
+.winner-toast.b-win { background-color: #e74c3c; color: #fff; }
+.winner-toast.t-win { background-color: #2ecc71; color: #000; }
