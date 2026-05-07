@@ -27,8 +27,12 @@ const bScoreEl = document.getElementById('banker-score');
 const m1TargetEl = document.getElementById('method1-target');
 const m2TargetEl = document.getElementById('method2-target');
 const confidenceEl = document.getElementById('ai-confidence');
+const toastEl = document.getElementById('winner-toast');
 
-function init() { renderUI(); }
+function init() { 
+    renderUI(); 
+    registerServiceWorker();
+}
 
 keys.forEach(key => {
     key.addEventListener('click', function() {
@@ -37,7 +41,6 @@ keys.forEach(key => {
     });
 });
 
-// Converts 'A' to 1, 'K' to 0, etc. for scoring math
 function getCardValue(cardStr) {
     if (cardStr === 'A') return 1;
     if (['10', 'J', 'Q', 'K'].includes(cardStr)) return 0;
@@ -47,10 +50,8 @@ function getCardValue(cardStr) {
 function processCard(val) {
     shoeHistory.push(val); 
 
-    // Simulation Rule: Face cards and 10 process strictly as ladder step/miss
     if (['10', 'J', 'Q', 'K'].includes(val)) {
         console.log(`${val} processed as step/miss for ladder progression.`);
-        // Note: Ladder tracking execution occurs here
     }
     
     // Route card to correct hand based on phase
@@ -87,7 +88,7 @@ function evaluateBaseHand() {
 
 function evaluateBankerThirdCard() {
     const bScore = getScore(currentHand.b);
-    const p3Val = getCardValue(currentHand.p[2]); // Math value of player's 3rd card
+    const p3Val = getCardValue(currentHand.p[2]);
 
     let bankerDraws = false;
     if (bScore <= 2) bankerDraws = true;
@@ -100,6 +101,26 @@ function evaluateBankerThirdCard() {
     else resolveWinner();
 }
 
+// Toast Notification Engine
+function showWinnerToast(winner, pScore, bScore) {
+    toastEl.className = 'winner-toast'; 
+    
+    if (winner === 'P') {
+        toastEl.textContent = `PLAYER WINS! (${pScore} - ${bScore})`;
+        toastEl.classList.add('p-win', 'show');
+    } else if (winner === 'B') {
+        toastEl.textContent = `BANKER WINS! (${bScore} - ${pScore})`;
+        toastEl.classList.add('b-win', 'show');
+    } else {
+        toastEl.textContent = `TIE! (${pScore} - ${bScore})`;
+        toastEl.classList.add('t-win', 'show');
+    }
+    
+    setTimeout(() => {
+        toastEl.classList.remove('show');
+    }, 2000);
+}
+
 function resolveWinner() {
     const pScore = getScore(currentHand.p);
     const bScore = getScore(currentHand.b);
@@ -109,8 +130,7 @@ function resolveWinner() {
     else if (bScore > pScore) winner = 'B';
 
     boardHistory.push(winner);
-    
-    // Process "One Cycle Per Number" rule logic here if auditing financial profit
+    showWinnerToast(winner, pScore, bScore);
 
     currentHand = { p: [], b: [] };
     dealPhase = 'P1';
@@ -141,7 +161,6 @@ function saveAndRender() {
     renderUI();
 }
 
-// Generate the visual HTML for cards
 function renderCardBadges(handArray) {
     if (handArray.length === 0) return '-';
     return handArray.map(cardStr => `<span class="card-badge">${cardStr}</span>`).join('');
@@ -158,7 +177,6 @@ function runPredictions() {
     let zeroCount = INITIAL_SHOE['10'] + INITIAL_SHOE['J'] + INITIAL_SHOE['Q'] + INITIAL_SHOE['K'];
     shoeHistory.forEach(c => { if (['10', 'J', 'Q', 'K'].includes(c)) zeroCount--; });
     
-    // Method 01: Composition
     const zeroRatio = zeroCount / remaining;
     if (zeroRatio > 0.33) {
         m1TargetEl.textContent = "BANKER";
@@ -168,7 +186,6 @@ function runPredictions() {
         m1TargetEl.className = "stat-value player-hand";
     }
 
-    // Method 02: Pattern
     const recent = boardHistory.slice(-4);
     const last = recent[recent.length-1];
     const prev = recent[recent.length-2];
@@ -184,17 +201,14 @@ function runPredictions() {
 }
 
 function renderUI() {
-    // 1. Update Hand Prompter
     promptText.textContent = `Awaiting: ${dealPhase === 'P1' ? 'Player Card 1' : dealPhase === 'B1' ? 'Banker Card 1' : dealPhase === 'P2' ? 'Player Card 2' : dealPhase === 'B2' ? 'Banker Card 2' : dealPhase === 'P3' ? 'Player Card 3 (Rules)' : 'Banker Card 3 (Rules)'}`;
     
-    // Render Visual Card Badges
     pCardsEl.innerHTML = renderCardBadges(currentHand.p);
     bCardsEl.innerHTML = renderCardBadges(currentHand.b);
     
     pScoreEl.textContent = currentHand.p.length ? getScore(currentHand.p) : '0';
     bScoreEl.textContent = currentHand.b.length ? getScore(currentHand.b) : '0';
 
-    // 2. Render Board History
     historyGrid.innerHTML = '';
     const reversedBoard = [...boardHistory].reverse();
     reversedBoard.forEach(winner => {
@@ -204,12 +218,21 @@ function renderUI() {
         historyGrid.appendChild(div);
     });
 
-    // 3. Update Status
     confidenceEl.textContent = `Cards Left: ${416 - shoeHistory.length}`;
     runPredictions();
 }
 
 cancelHandBtn.addEventListener('click', cancelHand);
 resetBtn.addEventListener('click', resetShoe);
+
+// Service Worker for offline capability
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .catch(err => console.log('SW Failed:', err));
+        });
+    }
+}
 
 init();
