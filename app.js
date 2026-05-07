@@ -1,4 +1,6 @@
 // --- avxp Tactical Baccarat Engine ---
+const expectedTotalEl = document.getElementById('expected-total');
+
 const AVXP_SHOE_KEY = 'avxp_baccarat_shoe';
 const AVXP_BOARD_KEY = 'avxp_baccarat_board';
 
