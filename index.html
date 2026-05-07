@@ -16,15 +16,34 @@
         </header>
 
         <div class="ai-panel">
-            <div class="ai-header">Shoe Composition Data</div>
+            <div class="ai-header">Tactical Prediction Engine</div>
             <div class="ai-metrics">
                 <div class="ai-metric-box">
-                    <span class="stat-label">Cards Remaining</span>
-                    <span class="stat-value" id="cards-left">416</span>
+                    <span class="stat-label">Method 01 (Composition)</span>
+                    <span class="stat-value" id="method1-target">Wait...</span>
                 </div>
                 <div class="ai-metric-box">
-                    <span class="stat-label">Net Profit (Cycle Rule)</span>
-                    <span class="stat-value neutral" id="net-profit">+0 U</span>
+                    <span class="stat-label">Method 02 (Pattern)</span>
+                    <span class="stat-value" id="method2-target">Wait...</span>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+                <span class="ai-confidence" id="ai-confidence">Cards Left: 416</span>
+            </div>
+        </div>
+
+        <div class="live-hand-section">
+            <h3 id="prompt-text" class="prompt-text">Awaiting: Player Card 1</h3>
+            <div class="hand-display">
+                <div class="hand-box player-hand">
+                    <span>PLAYER</span>
+                    <div id="player-cards" class="cards-area">-</div>
+                    <div id="player-score" class="score-area">0</div>
+                </div>
+                <div class="hand-box banker-hand">
+                    <span>BANKER</span>
+                    <div id="banker-cards" class="cards-area">-</div>
+                    <div id="banker-score" class="score-area">0</div>
                 </div>
             </div>
         </div>
@@ -45,12 +64,12 @@
         </div>
 
         <div class="controls action-controls">
-            <button id="undo-btn" class="secondary-btn" disabled>Undo Card</button>
+            <button id="cancel-hand-btn" class="secondary-btn">Cancel Hand</button>
             <button id="reset-shoe-btn" class="danger-btn">New Shoe</button>
         </div>
 
         <div class="history-section">
-            <h3>Current Shoe History</h3>
+            <h3>Shoe Board (Winners)</h3>
             <div id="history-grid" class="history-grid"></div>
         </div>
     </div>
