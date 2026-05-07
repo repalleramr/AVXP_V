@@ -279,5 +279,38 @@ function registerServiceWorker() {
         });
     }
 }
+function runPredictions() {
+    if (boardHistory.length < 3) {
+        m1TargetEl.textContent = "Wait"; m1TargetEl.className = "stat-value";
+        m2TargetEl.textContent = "Wait"; m2TargetEl.className = "stat-value";
+        expectedTotalEl.textContent = "Wait"; // Reset EV display
+        return;
+    }
+
+    // ... [Your existing Method 01 and Method 02 code remains here] ...
+
+    if (last === prev && last !== 'T') {
+        m2TargetEl.textContent = last === 'B' ? "BANKER" : "PLAYER";
+        m2TargetEl.className = `stat-value ${last === 'B' ? 'banker-hand' : 'player-hand'}`;
+    } else {
+        const target = last === 'B' ? 'PLAYER' : 'BANKER';
+        m2TargetEl.textContent = target;
+        m2TargetEl.className = `stat-value ${target === 'BANKER' ? 'banker-hand' : 'player-hand'}`;
+    }
+
+    // NEW: Calculate and display the exact Expected 2-Card Total
+    const ev = calculateExpectedTwoCardTotal();
+    expectedTotalEl.textContent = ev;
+    
+    // Optional: Add color coding based on whether the expected score is High or Low
+    if (ev >= 4.70) {
+        expectedTotalEl.className = "stat-value player-hand"; // High EV
+    } else if (ev <= 4.30) {
+        expectedTotalEl.className = "stat-value banker-hand"; // Low EV
+    } else {
+        expectedTotalEl.className = "stat-value neutral"; // Average
+    }
+}
+
 
 init();
