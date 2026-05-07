@@ -6,6 +6,49 @@ const AVXP_BOARD_KEY = 'avxp_baccarat_board';
 
 let shoeHistory = JSON.parse(localStorage.getItem(AVXP_SHOE_KEY)) || [];
 let boardHistory = JSON.parse(localStorage.getItem(AVXP_BOARD_KEY)) || [];
+// Calculates the mathematical Expected Value (EV) of a 2-card hand
+function calculateExpectedTwoCardTotal() {
+    const remainingCards = 416 - shoeHistory.length;
+    if (remainingCards < 2) return 0;
+
+    // Build the current shoe composition (0-9 values)
+    let counts = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
+    
+    // Initial 8-deck counts
+    counts[0] = INITIAL_SHOE['10'] + INITIAL_SHOE['J'] + INITIAL_SHOE['Q'] + INITIAL_SHOE['K'];
+    counts[1] = INITIAL_SHOE['A'];
+    for(let i=2; i<=9; i++) counts[i] = INITIAL_SHOE[i.toString()];
+
+    // Deduct cards already played
+    shoeHistory.forEach(c => {
+        let v = getCardValue(c);
+        counts[v]--;
+    });
+
+    let expectedValue = 0;
+
+    // Loop through every possible combination of 2 cards
+    for (let i = 0; i <= 9; i++) {
+        for (let j = 0; j <= 9; j++) {
+            if (i === j) {
+                // Probability of drawing the same value twice
+                if (counts[i] >= 2) {
+                    let prob = (counts[i] / remainingCards) * ((counts[i] - 1) / (remainingCards - 1));
+                    expectedValue += prob * ((i + j) % 10);
+                }
+            } else {
+                // Probability of drawing two different values
+                if (counts[i] >= 1 && counts[j] >= 1) {
+                    let prob = (counts[i] / remainingCards) * (counts[j] / (remainingCards - 1));
+                    expectedValue += prob * ((i + j) % 10);
+                }
+            }
+        }
+    }
+    
+    return expectedValue.toFixed(2);
+}
+
 
 // Live Hand State
 let currentHand = { p: [], b: [] };
